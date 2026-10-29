@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#142d4e">
+<meta name="description" content="Professional 2-team card game score tracker">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Card Score Pro</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1423;--panel:#142238;--panel2:#1b304b;--line:#30445d;--text:#f5f7fb;--muted:#a9b8cb;--gold:#f1cc78;--green:#5cdb9b;--red:#ff7b83}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#10213a,#08111f 60%);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);min-height:100vh}
+main{max-width:760px;margin:auto;padding:18px 14px 44px}.top{display:flex;align-items:center;gap:12px;padding:10px 2px 18px}.logo{font-size:32px}.brand{font-weight:850;letter-spacing:1.3px;font-size:21px}.sub{color:var(--muted);font-size:13px;margin-top:3px}.panel{background:rgba(20,34,56,.96);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 12px 30px #0002}
+.scoreboard{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:stretch}.score{background:var(--panel2);border-radius:14px;padding:14px;min-width:0}.teamname{font-size:13px;color:#c6d4e5;overflow-wrap:anywhere}.bigscore{font-size:44px;font-weight:850;line-height:1.2;margin:5px 0}.targetline{font-size:12px;color:var(--muted)}.bar{height:5px;background:#3a4d65;border-radius:9px;overflow:hidden;margin:10px 0 7px}.bar span{display:block;height:100%;background:var(--gold);width:0}.vs{display:grid;place-items:center;color:var(--gold);font-weight:900}.winner{display:none;background:#244b3c;border:1px solid #3c8a68;border-radius:12px;padding:14px;text-align:center;margin-top:14px;font-weight:800;font-size:20px}
+h2{font-size:17px;margin:0 0 14px}.muted{color:var(--muted);font-size:13px;line-height:1.5}.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;background:#0d192a;color:var(--text);border:1px solid #40536b;border-radius:10px;padding:11px 10px;font:inherit;min-width:0}input:focus,select:focus{outline:2px solid #e6c77a;border-color:transparent}.players{display:grid;grid-template-columns:1fr 1fr;gap:12px}.player{border:1px solid var(--line);border-radius:14px;padding:13px;background:#101e31}.playerhead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.teamtag{font-size:11px;font-weight:800;padding:5px 8px;border-radius:30px;background:#284568;color:#dceaff}.teamtag.b{background:#49365d;color:#f1e1ff}.playernum{font-size:11px;color:var(--muted)}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:8px}.points{display:flex;justify-content:space-between;align-items:center;margin-top:10px;border-top:1px solid #2b3b50;padding-top:9px;font-size:12px;color:var(--muted)}.points strong{font-size:18px}.pos{color:var(--green)}.neg{color:var(--red)}.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#0e1a2b;border-radius:12px;padding:13px;margin-top:14px}.summary small{display:block;color:var(--muted);font-size:12px}.summary strong{font-size:21px}.summary .right{text-align:right}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}button{border:0;border-radius:11px;padding:13px 12px;font:inherit;font-weight:750;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--gold);color:#1a2431}.secondary{background:#263a53;color:var(--text);border:1px solid #41546c}.danger{background:#552c37;color:#ffe4e7;border:1px solid #884652}.error{color:#ff9da4;font-size:13px;margin-top:10px;min-height:18px}.historyrow{border-top:1px solid var(--line);padding:12px 0}.historyhead{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}.historyscores{display:flex;justify-content:space-between;font-weight:800;font-size:18px}.entry{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;margin-top:5px}.empty{text-align:center;padding:20px;color:var(--muted);font-size:13px}.foot{text-align:center;color:#7f91a8;font-size:11px;padding:16px 5px}.hidden{display:none!important}
+@media(max-width:520px){main{padding:12px 10px 30px}.panel{padding:13px}.players{grid-template-columns:1fr}.bigscore{font-size:38px}.scoreboard{grid-template-columns:1fr 28px 1fr}.settings{grid-template-columns:1fr 1fr}.brand{font-size:19px}}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><div class="logo">🂡</div><div><div class="brand">CARD SCORE PRO</div><div class="sub">2-team card game · Offline scorekeeper</div></div></header>
+<section class="panel">
+ <div class="scoreboard">
+  <div class="score"><div class="teamname" id="boardA">Team A</div><div class="bigscore" id="scoreA">0</div><div class="bar"><span id="barA"></span></div><div class="targetline" id="leftA">100 points to target</div></div>
+  <div class="vs">VS</div>
+  <div class="score"><div class="teamname" id="boardB">Team B</div><div class="bigscore" id="scoreB">0</div><div class="bar"><span id="barB"></span></div><div class="targetline" id="leftB">100 points to target</div></div>
+ </div>
+ <div id="winner" class="winner"></div>
+</section>
+<section class="panel">
+ <h2>Game settings</h2>
+ <div class="settings">
+  <div class="field"><label for="teamA">Team A name</label><input id="teamA" value="Team A" maxlength="32"></div>
+  <div class="field"><label for="teamB">Team B name</label><input id="teamB" value="Team B" maxlength="32"></div>
+  <div class="field"><label for="target">Winning score</label><select id="target"><option>50</option><option selected>100</option><option>150</option><option>200</option></select></div>
+  <div class="field"><label>Round</label><input id="roundDisplay" value="1" disabled></div>
+ </div>
+</section>
+<section class="panel">
+ <h2 id="roundTitle">Round 1 · Player calls</h2>
+ <p class="muted">Enter each player's call and tricks taken. Call met or exceeded = +call points. Call missed = −call points. Each round must account for exactly 13 tricks.</p>
+ <div class="players" id="players"></div>
+ <div class="summary">
+  <div><small>Total calls</small><strong id="totalCalls">13 / 13</strong><div class="muted" id="callStatus">Calls are within limit</div></div>
+  <div class="right"><small>Total tricks</small><strong id="totalTricks">13 / 13</strong><div class="muted" id="trickStatus">Ready to save</div></div>
+ </div>
+ <div class="summary">
+  <div><small id="roundTeamA">Team A round points</small><strong id="roundA">+6</strong></div>
+  <div class="right"><small id="roundTeamB">Team B round points</small><strong id="roundB">+7</strong></div>
+ </div>
+ <div class="error" id="error" role="status" aria-live="polite"></div>
+ <div class="actions"><button class="primary" id="saveRound">✓ Save round</button><button class="secondary" id="undo">↶ Undo last round</button></div>
+</section>
+<section class="panel">
+ <h2>Round history</h2><div id="history"><div class="empty">No rounds saved yet. Enter the first round above.</div></div>
+ <div class="actions"><button class="secondary" id="export">Export score CSV</button><button class="danger" id="reset">Start new game</button></div>
+</section>
+<div class="foot">Card Score Pro · Your score data stays on this device.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const initialPlayers=[
+ {name:"Player 1",team:0,call:3,tricks:3},
+ {name:"Player 2",team:0,call:3,tricks:3},
+ {name:"Player 3",team:1,call:3,tricks:3},
+ {name:"Player 4",team:1,call:4,tricks:4}
+];
+let state={teamNames:["Team A","Team B"],target:100,players:initialPlayers.map(p=>({...p})),scores:[0,0],history:[],round:1,winner:""};
+function persist(){try{localStorage.setItem("cardScoreProState",JSON.stringify(state))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem("cardScoreProState"));if(s&&Array.isArray(s.players)&&s.players.length===4)state=s}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function playerPoints(p){return p.tricks>=p.call?p.call:-p.call}
+function teamRound(team){return state.players.filter(p=>p.team===team).reduce((sum,p)=>sum+playerPoints(p),0)}
+function renderPlayers(){
+ $("players").innerHTML=state.players.map((p,i)=>`<article class="player">
+ <div class="playerhead"><span class="teamtag ${p.team?"b":""}">${esc(state.teamNames[p.team])}</span><span class="playernum">PLAYER ${i+1}</span></div>
+ <div class="field"><label for="name${i}">Player name</label><input id="name${i}" maxlength="32" value="${esc(p.name)}" autocomplete="off"></div>
+ <div class="twocol" style="margin-top:9px">
+ <div class="field"><label for="call${i}">Call (1–13)</label><select id="call${i}">${Array.from({length:13},(_,n)=>`<option value="${n+1}" ${p.call===n+1?"selected":""}>${n+1}</option>`).join("")}</select></div>
+ <div class="field"><label for="tricks${i}">Tricks (0–13)</label><select id="tricks${i}">${Array.from({length:14},(_,n)=>`<option value="${n}" ${p.tricks===n?"selected":""}>${n}</option>`).join("")}</select></div>
+ </div><div class="points"><span>Round points</span><strong class="${playerPoints(p)>=0?"pos":"neg"}">${playerPoints(p)>0?"+":""}${playerPoints(p)}</strong></div>
+ </article>`).join("");
+ state.players.forEach((p,i)=>{
+  $("name"+i).addEventListener("input",e=>{p.name=e.target.value;update(false)});
+  $("call"+i).addEventListener("change",e=>{p.call=+e.target.value;update(false)});
+  $("tricks"+i).addEventListener("change",e=>{p.tricks=+e.target.value;update(false)});
+ });
+}
+function renderHistory(){
+ if(!state.history.length){$("history").innerHTML='<div class="empty">No rounds saved yet. Enter the first round above.</div>';return}
+ $("history").innerHTML=state.history.slice().reverse().map(h=>`<div class="historyrow">
+ <div class="historyhead"><strong>Round ${h.round}</strong><span class="muted">${h.winner?esc(h.winner):"Recorded"}</span></div>
+ <div class="historyscores"><span>${esc(h.teamNames[0])}: ${h.scores[0]}</span><span>${esc(h.teamNames[1])}: ${h.scores[1]}</span></div>
+ ${h.players.map(p=>`<div class="entry"><span>${esc(p.name)} · Call ${p.call}, tricks ${p.tricks}</span><strong class="${p.points>=0?"pos":"neg"}">${p.points>0?"+":""}${p.points}</strong></div>`).join("")}
+ </div>`).join("");
+}
+function update(save=true){
+ state.teamNames=[$("teamA").value.trim()||"Team A",$("teamB").value.trim()||"Team B"];
+ state.target=+$("target").value;
+ $("boardA").textContent=state.teamNames[0];$("boardB").textContent=state.teamNames[1];
+ $("roundTeamA").textContent=state.teamNames[0]+" round points";$("roundTeamB").textContent=state.teamNames[1]+" round points";
+ $("scoreA").textContent=state.scores[0];$("scoreB").textContent=state.scores[1];
+ $("barA").style.width=Math.max(0,Math.min(100,state.scores[0]/state.target*100))+"%";
+ $("barB").style.width=Math.max(0,Math.min(100,state.scores[1]/state.target*100))+"%";
+ $("leftA").textContent=Math.max(0,state.target-state.scores[0])+" points to target";
+ $("leftB").textContent=Math.max(0,state.target-state.scores[1])+" points to target";
+ $("roundDisplay").value=state.round;$("roundTitle").textContent="Round "+state.round+" · Player calls";
+ const calls=state.players.reduce((s,p)=>s+p.call,0),tricks=state.players.reduce((s,p)=>s+p.tricks,0);
+ $("totalCalls").textContent=calls+" / 13";$("totalTricks").textContent=tricks+" / 13";
+ $("callStatus").textContent=calls>13?"Calls exceed 13": "Calls are within limit";
+ $("callStatus").style.color=calls>13?"var(--red)":"var(--muted)";
+ $("trickStatus").textContent=tricks===13?"Ready to save":"Need "+(13-tricks)+" more tricks";
+ $("trickStatus").style.color=tricks===13?"var(--green)":"var(--muted)";
+ $("roundA").textContent=(teamRound(0)>0?"+":"")+teamRound(0);$("roundB").textContent=(teamRound(1)>0?"+":"")+teamRound(1);
+ $("roundA").className=teamRound(0)>=0?"pos":"neg";$("roundB").className=teamRound(1)>=0?"pos":"neg";
+ $("saveRound").disabled=!!state.winner;
+ $("winner").style.display=state.winner?"block":"none";
+ $("winner").textContent=state.winner==="DRAW"?"Match drawn!":state.winner?state.winner+" wins!":"";
+ if(save)persist();
+ renderHistory();
+}
+function showError(s){$("error").textContent=s}
+function saveRound(){
+ if(state.winner){showError("Game complete. Start a new game to continue.");return}
+ if(state.players.some(p=>!p.name.trim())){showError("Please enter all four player names.");return}
+ if(state.players.some(p=>p.call<1||p.call>13)){showError("Each call must be between 1 and 13.");return}
+ const calls=state.players.reduce((s,p)=>s+p.call,0),tricks=state.players.reduce((s,p)=>s+p.tricks,0);
+ if(calls>13){showError("Total calls cannot exceed 13.");return}
+ if(tricks!==13){showError("The four players' tricks must total exactly 13.");return}
+ const points=state.players.map(p=>({...p,points:playerPoints(p)}));
+ state.scores[0]+=teamRound(0);state.scores[1]+=teamRound(1);
+ let w="";const a=state.scores[0]>=state.target,b=state.scores[1]>=state.target;
+ if(a&&b)w="DRAW";else if(a)w=state.teamNames[0];else if(b)w=state.teamNames[1];
+ state.winner=w;
+ state.history.push({round:state.round,teamNames:[...state.teamNames],players:points,scores:[...state.scores],winner:w});
+ state.round++;state.players.forEach(p=>{p.call=1;p.tricks=0});
+ showError("");renderPlayers();update();
+}
+function undo(){
+ if(!state.history.length){showError("There is no round to undo.");return}
+ const h=state.history.pop();
+ state.scores=[0,0];state.history.forEach(r=>{state.scores=[r.scores[0],r.scores[1]]});
+ state.round=h.round;state.winner=state.history.length?state.history[state.history.length-1].winner:"";
+ state.players=h.players.map(p=>({name:p.name,team:p.team,call:p.call,tricks:p.tricks}));
+ renderPlayers();showError("Last round undone.");update();
+}
+function reset(){
+ if(!confirm("Start a new game? Current score and history will be cleared."))return;
+ state={teamNames:[$("teamA").value.trim()||"Team A",$("teamB").value.trim()||"Team B"],target:+$("target").value,players:initialPlayers.map(p=>({...p})),scores:[0,0],history:[],round:1,winner:""};
+ $("error").textContent="";renderPlayers();update();
+}
+function exportCSV(){
+ const rows=[["Round","Team","Player","Call","Tricks","Points","Team A Score","Team B Score"]];
+ state.history.forEach(h=>h.players.forEach(p=>rows.push([h.round,h.teamNames[p.team],p.name,p.call,p.tricks,p.points,h.scores[0],h.scores[1]])));
+ const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));a.download="card-score-history.csv";a.click();URL.revokeObjectURL(a.href);
+}
+load();
+$("teamA").value=state.teamNames[0];$("teamB").value=state.teamNames[1];$("target").value=String(state.target||100);
+renderPlayers();update(false);
+$("teamA").addEventListener("input",()=>update());$("teamB").addEventListener("input",()=>update());$("target").addEventListener("change",()=>update());
+$("saveRound").addEventListener("click",saveRound);$("undo").addEventListener("click",undo);$("reset").addEventListener("click",reset);$("export").addEventListener("click",exportCSV);
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
